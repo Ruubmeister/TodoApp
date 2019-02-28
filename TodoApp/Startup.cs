@@ -31,8 +31,7 @@ namespace TodoApp
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             var databaseSettingsSection = Configuration.GetSection("Database");
-
-            // configure jwt authentication
+            
             var databaseSettings = databaseSettingsSection.Get<DbSettings>();
 
             services.AddDbContext<TodoDbContext>(options => options.UseSqlServer(databaseSettings.Connection));
