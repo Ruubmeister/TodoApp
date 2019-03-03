@@ -13,5 +13,6 @@ namespace TodoApp.Models
 
         public bool Active { get; set; }
 
+        public List<Task> Tasks { get; set; }
     }
 }

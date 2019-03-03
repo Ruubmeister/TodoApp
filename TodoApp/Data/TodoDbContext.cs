@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using TodoApp.Models;
 
@@ -14,6 +15,13 @@ namespace TodoApp.Data
 
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Models.Task>()
+                .HasOne(c => c.TaskList)
+                .WithMany(e => e.Tasks);
+        }
+
         public virtual DbSet<Models.Task> Tasks { get; set; }
 
         public virtual DbSet<Comment> Comments { get; set; }
@@ -22,24 +30,40 @@ namespace TodoApp.Data
 
         public override int SaveChanges()
         {
-            AddTimestamps();
+            OnBeforeSaving();
             return base.SaveChanges();
         }
 
 
-        private void AddTimestamps()
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            var entities = ChangeTracker.Entries().Where(x => x.Entity is BaseEntity && (x.State == EntityState.Added || x.State == EntityState.Modified));
-            
+            OnBeforeSaving();
+            return base.SaveChangesAsync(cancellationToken);
+        }
 
-            foreach (var entity in entities)
+        private void OnBeforeSaving()
+        {
+
+            foreach (var entry in ChangeTracker.Entries())
             {
-                if (entity.State == EntityState.Added)
+                if (entry.Entity is BaseEntity trackable)
                 {
-                    ((BaseEntity)entity.Entity).CreatedAt = DateTime.UtcNow;
-                }
+                    var now = DateTime.UtcNow;
 
-                ((BaseEntity)entity.Entity).UpdatedAt = DateTime.UtcNow;
+                    trackable.UpdatedAt = now;
+
+                    switch (entry.State)
+                    {
+                        case EntityState.Modified:
+                            trackable.CreatedAt = entry.GetDatabaseValues().GetValue<DateTime>("CreatedAt");
+                            break;
+
+                        case EntityState.Added:
+                            trackable.CreatedAt = now;
+
+                            break;
+                    }
+                }
             }
         }
     }

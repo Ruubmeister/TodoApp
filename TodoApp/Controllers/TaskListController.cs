@@ -24,7 +24,7 @@ namespace TodoApp.Controllers
         [HttpGet]
         public async Task<IEnumerable<TaskList>> get()
         {
-            return await _context.TaskLists.ToListAsync();
+            return await _context.TaskLists.Include("Tasks").ToListAsync();
         }
 
         [HttpPost]
@@ -37,9 +37,9 @@ namespace TodoApp.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TaskList>> GetTaskList(long id)
+        public async Task<ActionResult<TaskList>> GetTaskList(int id)
         {
-            var taskList = await _context.TaskLists.FindAsync(id);
+            var taskList = await _context.TaskLists.Include("Tasks").Where(t => t.TaskListId == id).FirstAsync();
 
             if (taskList == null)
             {
