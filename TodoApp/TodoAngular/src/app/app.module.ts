@@ -3,7 +3,12 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { TaskListComponent } from './task-list/task-list/task-list.component';
+import { TaskListComponent } from './task-list/task-list.component';
+import { TaskListService } from './task-list/task-list.service';
+import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatListModule } from '@angular/material/list';
+import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
   declarations: [
@@ -12,9 +17,13 @@ import { TaskListComponent } from './task-list/task-list/task-list.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    MatListModule,
+    MatCardModule,
   ],
-  providers: [],
+  providers: [TaskListService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,3 +1,15 @@
-<p>
-  task-list works!
-</p>
+
+<div class="row">
+  <div class="col-12 col-sm-12 col-md-4">
+      <h2>{{title}}</h2>
+      <p>Click one to open tasks</p>
+      <hr />
+      <mat-list-item *ngFor="let taskList of taskLists">
+        <a matLine routerLink="/task/{{taskList.Id}}">{{ taskList.Name }}</a>
+
+      </mat-list-item>
+  </div>
+  <div class="col-12 col-sm-12 col-md-8">
+    Taken
+  </div>
+</div>
